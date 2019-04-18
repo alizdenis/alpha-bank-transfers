@@ -99,9 +99,9 @@ class TransferApiIT {
                   "  \"destinationId\": 7,\n" +
                   "  \"amount\": 5\n" +
                   "}")
-            .when()
+        .when()
             .post("transfer/sync")
-            .then()
+        .then()
             .statusCode(404);
 
         checkAccountBalance(1,1000);
@@ -117,9 +117,9 @@ class TransferApiIT {
                   "  \"destinationId\": 7,\n" +
                   "  \"amount\": 5\n" +
                   "}")
-            .when()
+        .when()
             .post("transfer/async")
-            .then()
+        .then()
             .statusCode(201)
             .body(
                 "id", notNullValue(),
