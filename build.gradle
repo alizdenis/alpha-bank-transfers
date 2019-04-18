@@ -1,0 +1,71 @@
+plugins {
+  id 'java'
+  id 'application'
+  id 'com.github.johnrengelman.shadow' version '5.0.0'
+}
+
+group = 'com.bank'
+version = '1.0.0'
+
+repositories {
+  mavenCentral()
+}
+
+ext {
+  vertxVersion = '3.7.0'
+  junitJupiterEngineVersion = '5.4.0'
+  lombokVersion = '1.18.6'
+  guiceVersion = '4.1.0'
+  jacksonVersion = '2.9.8'
+  restAssuredVersion = '3.3.0'
+  mockitoVersion = '2.27.0'
+}
+
+application {
+  mainClassName = 'io.vertx.core.Launcher'
+}
+
+sourceCompatibility = '1.8'
+
+def mainVerticleName = 'com.bank.alpha.MainRxVerticle'
+def watchForChange = 'src/**/*'
+def doOnChange = './gradlew classes'
+
+dependencies {
+  compileOnly "org.projectlombok:lombok:$lombokVersion"
+  annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+  implementation "io.vertx:vertx-core:$vertxVersion"
+  implementation "io.vertx:vertx-rx-java2:$vertxVersion"
+  implementation "io.vertx:vertx-web:$vertxVersion"
+  implementation "com.google.inject:guice:$guiceVersion"
+  implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+
+  testImplementation "io.vertx:vertx-junit5:$vertxVersion"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterEngineVersion"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junitJupiterEngineVersion"
+  testImplementation "io.rest-assured:rest-assured:$restAssuredVersion"
+  testImplementation "org.mockito:mockito-core:$mockitoVersion"
+}
+
+shadowJar {
+  classifier = 'fat'
+  manifest {
+    attributes 'Main-Verticle': mainVerticleName
+  }
+  mergeServiceFiles {
+    include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+  }
+}
+
+test {
+  useJUnitPlatform()
+  testLogging {
+    events 'PASSED', 'FAILED', 'SKIPPED'
+  }
+}
+
+run {
+  args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange"]
+}
