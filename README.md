@@ -1,6 +1,6 @@
-#alpha bank transfers
+# alpha bank transfers
 
-##Motivation
+## Motivation
 
 To write simplified version of money transfer application using non blocking way, utilizing Vert.x and RxJava
 
